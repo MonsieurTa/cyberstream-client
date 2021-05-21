@@ -14,6 +14,15 @@ class HyperJackett {
       .then(data => data.json())
       .then(data => data)
   }
+
+  fetchCategories() {
+    const endpoint = "/categories";
+    const url = this.apiUrl + endpoint;
+
+    return fetch(url)
+      .then(data => data.json())
+      .then(data => data)
+  }
 }
 
 export default new HyperJackett()
