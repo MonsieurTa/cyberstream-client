@@ -8,15 +8,20 @@
       :categoryItems="categoryNames"
       :searchHandler="handleSearch"
     />
+    <hyper-list
+      v-if="!pristine"
+      :items="searchResult"
+    />
   </v-container>
 </template>
 
 <script>
 import service from "@/services/hyper-jackett";
 import HyperSearchBox from '@/components/HyperSearchBox.vue';
+import HyperList from '@/components/HyperList.vue';
 
 export default {
-  components: { HyperSearchBox },
+  components: { HyperSearchBox, HyperList },
   name: "Home",
   async mounted() {
     service.fetchCategories().then((categories) => {
@@ -31,13 +36,15 @@ export default {
       categories: {},
       selectedCategories: [],
 
-      defaultSearchClass: "d-flex align-center search-expand",
-      topSearchClass: "d-flex align-center search-collapse",
+      searchResult: [],
+
+      expandSearchClass: "d-flex align-center search-expand",
+      collapseSearchClass: "d-flex align-center search-collapse",
     };
   },
   computed: {
     searchClass() {
-      return this.pristine ? this.defaultSearchClass : this.topSearchClass;
+      return this.pristine ? this.expandSearchClass : this.collapseSearchClass;
     },
     categoryNames() {
       return Object.keys(this.categories);
@@ -49,8 +56,12 @@ export default {
   methods: {
     async handleSearch() {
       const response = await service.search(this.pattern, this.categoryValues);
-      this.pristine = false;
-      console.log(response);
+
+      if (this.pristine) {
+        this.pristine = false;
+      }
+
+      this.searchResult = response["Results"];
     },
   },
 };
@@ -64,12 +75,12 @@ h1 {
 
 .search-expand {
   flex-grow: 1;
-  transition: flex-grow 0.3s ease-in;
+  transition: flex-grow 0.2s ease-in;
 }
 
 .search-collapse {
   flex-grow: 0;
-  transition: flex-grow 0.3s ease-in;
+  transition: flex-grow 0.2s ease-in;
 }
 
 </style>
