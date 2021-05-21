@@ -1,47 +1,21 @@
 <template>
   <v-container class="fill-height">
-    <v-row>
-      <v-spacer />
-      <v-col cols="4" class="d-flex flex-column justify-center">
-        <v-text-field
-          dark
-          v-model="pattern"
-          class="flex-grow-0"
-          prepend-inner-icon="mdi-magnify"
-          append-icon="mdi-arrow-right"
-          label="Looking for something to watch ?"
-          dense
-          single-line
-          clearable
-          outlined
-          background-color="grey darken-3"
-          color="primary"
-          hide-details
-        />
-        <v-row>
-          <v-spacer />
-          <v-col v-for="name in categoryNames" :key="name" cols="3">
-            <v-checkbox
-              dark
-              v-model="selectedCategories"
-              :key="name"
-              :label="name"
-              :value="name"
-              hide-details
-            />
-          </v-col>
-          <v-spacer />
-        </v-row>
-      </v-col>
-      <v-spacer />
-    </v-row>
+    <hyper-search-box
+      label="Watch something ?"
+      :pattern.sync="pattern"
+      :selectedCategories.sync="selectedCategories"
+      :categoryItems="categoryNames"
+      :searchHandler="handleSearch"
+    />
   </v-container>
 </template>
 
 <script>
 import service from "@/services/hyper-jackett";
+import HyperSearchBox from '@/components/HyperSearchBox.vue';
 
 export default {
+  components: { HyperSearchBox },
   name: "Home",
   async mounted() {
     service.fetchCategories().then((categories) => {
@@ -51,16 +25,25 @@ export default {
   data() {
     return {
       pattern: "",
-      selectedCategories: [],
       categories: {},
+      selectedCategories: [],
     };
   },
   computed: {
     categoryNames() {
       return Object.keys(this.categories);
     },
+    categoryValues() {
+      return this.selectedCategories.map(c => this.categories[c])
+    }
   },
-  methods: {},
+  methods: {
+    async handleSearch() {
+      const result = await service.search(this.pattern, this.categoryValues);
+      console.log(result);
+      return result;
+    },
+  },
 };
 </script>
 
