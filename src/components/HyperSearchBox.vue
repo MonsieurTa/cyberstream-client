@@ -1,25 +1,27 @@
 <template>
-  <v-row>
-    <v-spacer class="hidden-md-and-down" />
-    <v-col lg="4" sm="12" md="12" class="d-flex flex-column justify-center">
-      <search-input :label="label" :pattern.sync="patternListener" :searchHandler="searchHandler" />
-      <v-row>
-        <v-spacer />
-        <v-col v-for="name in categoryItems" :key="name" cols="3">
-          <v-checkbox
-            dark
-            v-model="selectedCategoriesListener"
-            :key="name"
-            :label="name"
-            :value="name"
-            hide-details
-          />
-        </v-col>
-        <v-spacer />
-      </v-row>
-    </v-col>
-    <v-spacer class="hidden-md-and-down"/>
-  </v-row>
+  <v-container>
+    <v-row>
+      <v-spacer class="hidden-md-and-down" />
+      <v-col lg="4" sm="12" md="12" class="d-flex flex-column justify-center">
+        <search-input :label="label" :pattern.sync="patternListener" :searchHandler="searchHandler" />
+        <v-row>
+          <v-spacer />
+          <v-col v-for="name in categoryItems" :key="name" cols="3">
+            <v-checkbox
+              dark
+              v-model="selectedCategoriesListener"
+              :key="name"
+              :label="name"
+              :value="name"
+              hide-details
+            />
+          </v-col>
+          <v-spacer />
+        </v-row>
+      </v-col>
+      <v-spacer class="hidden-md-and-down"/>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

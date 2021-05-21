@@ -1,6 +1,7 @@
 <template>
-  <v-container class="fill-height">
+  <v-container class="flex-column fill-height">
     <hyper-search-box
+      :class="searchClass"
       label="Watch something ?"
       :pattern.sync="pattern"
       :selectedCategories.sync="selectedCategories"
@@ -24,12 +25,20 @@ export default {
   },
   data() {
     return {
+      pristine: true,
+
       pattern: "",
       categories: {},
       selectedCategories: [],
+
+      defaultSearchClass: "d-flex align-center search-expand",
+      topSearchClass: "d-flex align-center search-collapse",
     };
   },
   computed: {
+    searchClass() {
+      return this.pristine ? this.defaultSearchClass : this.topSearchClass;
+    },
     categoryNames() {
       return Object.keys(this.categories);
     },
@@ -39,16 +48,28 @@ export default {
   },
   methods: {
     async handleSearch() {
-      const result = await service.search(this.pattern, this.categoryValues);
-      console.log(result);
-      return result;
+      const response = await service.search(this.pattern, this.categoryValues);
+      this.pristine = false;
+      console.log(response);
     },
   },
 };
 </script>
 
 <style scoped>
+
 h1 {
   font-size: 4.5em;
 }
+
+.search-expand {
+  flex-grow: 1;
+  transition: flex-grow 0.3s ease-in;
+}
+
+.search-collapse {
+  flex-grow: 0;
+  transition: flex-grow 0.3s ease-in;
+}
+
 </style>
