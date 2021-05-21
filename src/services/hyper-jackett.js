@@ -2,12 +2,12 @@ class HyperJackett {
   apiUrl = null;
 
   constructor() {
-    this.apiUrl = "http://localhost:3000/api/jackett"
+    this.apiUrl = "http://localhost:3001/api/jackett"
   }
 
   search(pattern, categories) {
-    const endpoint = "/";
-    const params = `&pattern=${pattern}${categories?.map(c => `&category=${c}`) || ""}`;
+    const endpoint = "/search";
+    const params = `?pattern=${pattern}${categories?.map(c => `&category=${c}`) || ""}`;
 
     const url = this.apiUrl + endpoint + params;
     return fetch(url)
