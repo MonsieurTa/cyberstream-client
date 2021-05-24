@@ -9,8 +9,8 @@
           :searchHandler="searchHandler"
         />
         <v-row>
-          <v-spacer />
-          <v-col v-for="name in categoryItems" :key="name" cols="3">
+          <v-spacer class="hidden-md-and-down" />
+          <v-col v-for="name in categoryItems" :key="name" lg="3" sm="4">
             <v-checkbox
               dark
               dense
@@ -21,7 +21,7 @@
               hide-details
             />
           </v-col>
-          <v-spacer />
+          <v-spacer class="hidden-md-and-down" />
         </v-row>
       </v-col>
       <v-spacer class="hidden-md-and-down" />

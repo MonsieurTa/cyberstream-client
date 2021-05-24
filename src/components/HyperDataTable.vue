@@ -12,6 +12,7 @@
       sort-by="Seeders"
       :sort-desc="true"
       @click:row="handleClick"
+      mobile-breakpoint="0"
     >
       <template v-slot:[`item.Size`]="{ item }">
         {{ readableDataSize(item.Size) }}

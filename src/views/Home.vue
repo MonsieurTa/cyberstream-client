@@ -12,9 +12,9 @@
       v-if="!pristine"
       :items="searchResult"
       :loading="loading"
-      :content.sync="selectedContent"
+      :content.sync="selectedContents"
     />
-    <hyper-media-dialog :open.sync="openDialog" />
+    <hyper-media-dialog :open.sync="openDialog" :content="selectedContent" />
   </v-container>
 </template>
 
@@ -42,7 +42,7 @@ export default {
       categories: {},
 
       selectedCategories: [],
-      selectedContent: [],
+      selectedContents: [],
 
       searchResult: [],
 
@@ -51,8 +51,15 @@ export default {
     };
   },
   watch: {
-    selectedContent() {
-      this.openDialog = true;
+    openDialog(value) {
+      if (value === false) {
+        this.selectedContents = [];
+      }
+    },
+    selectedContents(value) {
+      if (value.length > 0) {
+        this.openDialog = true;
+      }
     },
   },
   computed: {
@@ -65,12 +72,17 @@ export default {
     categoryValues() {
       return this.selectedCategories.map((c) => this.categories[c]);
     },
+    selectedContent() {
+      const empty = (l) => l.length === 0;
+      return empty(this.selectedContents) ? {} : this.selectedContents[0];
+    },
   },
   methods: {
     async handleSearch() {
       if (this.pristine) {
         this.pristine = false;
       }
+
       this.loading = true;
       const response = await service.search(this.pattern, this.categoryValues);
       this.loading = false;
