@@ -8,20 +8,24 @@
       :categoryItems="categoryNames"
       :searchHandler="handleSearch"
     />
-    <hyper-list
+    <hyper-data-table
       v-if="!pristine"
       :items="searchResult"
+      :loading="loading"
+      :content.sync="selectedContent"
     />
+    <hyper-media-dialog :open.sync="openDialog" />
   </v-container>
 </template>
 
 <script>
 import service from "@/services/hyper-jackett";
-import HyperSearchBox from '@/components/HyperSearchBox.vue';
-import HyperList from '@/components/HyperList.vue';
+import HyperSearchBox from "@/components/HyperSearchBox.vue";
+import HyperDataTable from "@/components/HyperDataTable.vue";
+import HyperMediaDialog from "@/components/HyperMediaDialog.vue";
 
 export default {
-  components: { HyperSearchBox, HyperList },
+  components: { HyperSearchBox, HyperDataTable, HyperMediaDialog },
   name: "Home",
   async mounted() {
     service.fetchCategories().then((categories) => {
@@ -31,16 +35,25 @@ export default {
   data() {
     return {
       pristine: true,
+      loading: false,
+      openDialog: false,
 
       pattern: "",
       categories: {},
+
       selectedCategories: [],
+      selectedContent: [],
 
       searchResult: [],
 
       expandSearchClass: "d-flex align-center search-expand",
       collapseSearchClass: "d-flex align-center search-collapse",
     };
+  },
+  watch: {
+    selectedContent() {
+      this.openDialog = true;
+    },
   },
   computed: {
     searchClass() {
@@ -50,16 +63,17 @@ export default {
       return Object.keys(this.categories);
     },
     categoryValues() {
-      return this.selectedCategories.map(c => this.categories[c])
-    }
+      return this.selectedCategories.map((c) => this.categories[c]);
+    },
   },
   methods: {
     async handleSearch() {
-      const response = await service.search(this.pattern, this.categoryValues);
-
       if (this.pristine) {
         this.pristine = false;
       }
+      this.loading = true;
+      const response = await service.search(this.pattern, this.categoryValues);
+      this.loading = false;
 
       this.searchResult = response["Results"];
     },
@@ -68,7 +82,6 @@ export default {
 </script>
 
 <style scoped>
-
 h1 {
   font-size: 4.5em;
 }
@@ -82,5 +95,4 @@ h1 {
   flex-grow: 0;
   transition: flex-grow 0.2s ease-in;
 }
-
 </style>

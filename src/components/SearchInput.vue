@@ -14,16 +14,17 @@
     color="primary"
     hide-details
     @keypress.enter="searchHandler"
+    @click:append="searchHandler"
   />
 </template>
 
 <script>
 export default {
-  name: 'SearchInput',
+  name: "SearchInput",
   props: {
     pattern: String,
     label: String,
-    searchHandler: Function
+    searchHandler: Function,
   },
   computed: {
     patternListener: {
@@ -31,7 +32,7 @@ export default {
         return this.pattern;
       },
       set(value) {
-        this.$emit('update:pattern', value);
+        this.$emit("update:pattern", value);
       },
     },
   },
