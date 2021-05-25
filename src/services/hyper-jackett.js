@@ -7,7 +7,7 @@ class HyperJackett {
 
   search(pattern, categories) {
     const endpoint = "/search";
-    const params = `?pattern=${pattern}${categories?.map(c => `&category=${c}`) || ""}`;
+    const params = `?pattern=${pattern}${categories.map(c => `&category=${c}`).join('')}`;
 
     const url = this.apiUrl + endpoint + params;
     return fetch(url)
