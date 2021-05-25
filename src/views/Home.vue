@@ -10,7 +10,7 @@
     />
     <hyper-data-table
       v-if="!pristine"
-      :items="searchResult"
+      :items="searchResults"
       :loading="loading"
       :content.sync="selectedContents"
     />
@@ -44,7 +44,7 @@ export default {
       selectedCategories: [],
       selectedContents: [],
 
-      searchResult: [],
+      searchResults: [],
 
       expandSearchClass: "d-flex align-center search-expand",
       collapseSearchClass: "d-flex align-center search-collapse",
@@ -84,10 +84,10 @@ export default {
       }
 
       this.loading = true;
-      const response = await service.search(this.pattern, this.categoryValues);
+      const results = await service.search(this.pattern, this.categoryValues);
       this.loading = false;
 
-      this.searchResult = response["Results"];
+      this.searchResults = results;
     },
   },
 };
