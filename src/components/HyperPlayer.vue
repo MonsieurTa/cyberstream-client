@@ -11,6 +11,7 @@ import "video.js/dist/video-js.css";
 export default {
   name: "VideoPlayer",
   props: {
+    src: Object,
     options: {
       type: Object,
       default() {
@@ -23,8 +24,13 @@ export default {
       player: null,
     };
   },
+  watch: {
+    src() {
+      console.log(this.src);
+      this.player.src(this.src);
+    },
+  },
   mounted() {
-    console.log(videojs);
     this.player = videojs(
       this.$refs.videoPlayer,
       this.options,

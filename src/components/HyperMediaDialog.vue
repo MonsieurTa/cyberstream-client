@@ -19,7 +19,7 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-app-bar>
-      <hyper-player :options="options" />
+      <hyper-player v-if="!disposePlayer" :src="playerSource" :options="playerOptions" />
     </v-card>
   </v-dialog>
 </template>
@@ -39,8 +39,8 @@ export default {
   data() {
     return {
       loading: false,
-      hlsUrl: null,
-      defaultOptions: {
+      playerSource: null,
+      playerOptions: {
         html5: {
           hls: {
             overrideNative: true,
@@ -63,34 +63,30 @@ export default {
         this.$emit("update:open", v);
       },
     },
-    sources() {
-      return [
-        {
-          src:
-            "http://localhost:8080/5adc0a432b8784081ee864ad7231cb388050f67f/out.m3u8",
-          type: "application/x-mpegURL",
-        },
-      ];
+    disposePlayer() {
+      return this.playerSource === null || this.openListener === false;
     },
-    options() {
+    source() {
+      console.log(this.hlsUrl);
       return {
-        ...this.defaultOptions,
-        sources: this.sources,
+        src: this.hlsUrl,
+        type: "application/x-mpegURL",
       };
-    },
-  },
-  watch: {
-    content() {
-      console.log(this.content);
     },
   },
   methods: {
     async handleClick() {
       this.loading = true;
-      this.hlsUrl = await service.stream(
+
+      const hlsUrl = await service.stream(
         this.content.Title,
         this.content.MagnetUri
-      );
+      ).then(({ data }) => data);
+      this.playerSource = {
+        src: hlsUrl,
+        type: "application/x-mpegURL",
+      };
+
       this.loading = false;
     },
     readableDataSize(strSize) {
