@@ -4,21 +4,30 @@
       <v-app-bar color="black">
         <v-card-text>{{ content.Title }}</v-card-text>
         <v-spacer />
-        <v-btn icon small left outlined rounded color="red" @click="handleClick">
+        <v-btn
+          icon
+          small
+          left
+          outlined
+          rounded
+          color="red"
+          @click="handleClick"
+        >
           <v-icon>mdi-play</v-icon>
         </v-btn>
         <v-btn icon @click="openListener = false">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-app-bar>
-      <hyper-player/>
+      <hyper-player :options="options" />
     </v-card>
   </v-dialog>
 </template>
 
 <script>
 import { convertDataUnit } from "@/utils/conversion";
-import HyperPlayer from '@/components/HyperPlayer.vue';
+import HyperPlayer from "@/components/HyperPlayer.vue";
+import service from "@/services/hyper-stream";
 
 export default {
   components: { HyperPlayer },
@@ -26,6 +35,24 @@ export default {
   props: {
     open: Boolean,
     content: Object,
+  },
+  data() {
+    return {
+      loading: false,
+      hlsUrl: null,
+      defaultOptions: {
+        html5: {
+          hls: {
+            overrideNative: true,
+          },
+          nativeAudioTracks: false,
+          nativeVideoTracks: false,
+        },
+        fluid: true,
+        liveui: true,
+        controls: true,
+      },
+    };
   },
   computed: {
     openListener: {
@@ -36,6 +63,21 @@ export default {
         this.$emit("update:open", v);
       },
     },
+    sources() {
+      return [
+        {
+          src:
+            "http://localhost:8080/5adc0a432b8784081ee864ad7231cb388050f67f/out.m3u8",
+          type: "application/x-mpegURL",
+        },
+      ];
+    },
+    options() {
+      return {
+        ...this.defaultOptions,
+        sources: this.sources,
+      };
+    },
   },
   watch: {
     content() {
@@ -43,10 +85,13 @@ export default {
     },
   },
   methods: {
-    handleClick() {
-      // request stream
-      // wait first 1%
-      // display player
+    async handleClick() {
+      this.loading = true;
+      this.hlsUrl = await service.stream(
+        this.content.Title,
+        this.content.MagnetUri
+      );
+      this.loading = false;
     },
     readableDataSize(strSize) {
       return convertDataUnit(parseInt(strSize));
