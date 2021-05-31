@@ -12,6 +12,7 @@ export default {
   name: "VideoPlayer",
   props: {
     src: Object,
+    tracks: Object,
     options: {
       type: Object,
       default() {
@@ -25,9 +26,20 @@ export default {
     };
   },
   watch: {
-    src() {
-      console.log(this.src);
-      this.player.src(this.src);
+    src(v) {
+      this.player.src(v);
+    },
+    tracks(v) {
+      this.player.addRemoteTextTrack(
+        {
+          ...v,
+          kind: "subtitles",
+          mode: "showing",
+          language: "en",
+          label: "english",
+        },
+        false
+      );
     },
   },
   mounted() {

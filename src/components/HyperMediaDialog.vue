@@ -19,7 +19,11 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-app-bar>
-      <hyper-player v-if="!disposePlayer" :src="playerSource" :options="playerOptions" />
+      <hyper-player
+        :src="playerSource"
+        :tracks="playerTracks"
+        :options="playerOptions"
+      />
     </v-card>
   </v-dialog>
 </template>
@@ -40,9 +44,10 @@ export default {
     return {
       loading: false,
       playerSource: null,
+      playerTracks: null,
       playerOptions: {
         html5: {
-          hls: {
+          vhs: {
             overrideNative: true,
           },
           nativeAudioTracks: false,
@@ -66,26 +71,18 @@ export default {
     disposePlayer() {
       return this.playerSource === null || this.openListener === false;
     },
-    source() {
-      console.log(this.hlsUrl);
-      return {
-        src: this.hlsUrl,
-        type: "application/x-mpegURL",
-      };
-    },
   },
   methods: {
     async handleClick() {
       this.loading = true;
 
-      const hlsUrl = await service.stream(
-        this.content.Title,
-        this.content.MagnetUri
-      ).then(({ data }) => data);
-      this.playerSource = {
-        src: hlsUrl,
-        type: "application/x-mpegURL",
-      };
+      const infoHash = this.content.InfoHash.toLowerCase();
+      const { Title, MagnetUri } = this.content;
+
+      const { src, tracks } = await service.stream(Title, infoHash, MagnetUri);
+
+      this.playerSource = src;
+      this.playerTracks = tracks;
 
       this.loading = false;
     },
