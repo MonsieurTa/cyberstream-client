@@ -77,9 +77,9 @@ export default {
       this.loading = true;
 
       const infoHash = this.content.InfoHash.toLowerCase();
-      const { Title, MagnetUri } = this.content;
+      const { MagnetUri } = this.content;
 
-      const { src, tracks } = await service.stream(Title, infoHash, MagnetUri);
+      const { src, tracks } = await service.stream(infoHash, MagnetUri);
 
       this.playerSource = src;
       this.playerTracks = tracks;

@@ -7,11 +7,9 @@ class HyperStream {
     this.apiUrl = "http://localhost:3001/api"
   }
 
-  stream(name, hash, encryptedMagnet) {
-    const encode = (v) => encodeURIComponent(v);
-
+  stream(hash, encryptedMagnet) {
     const endpoint = "/stream";
-    const params = `?name=${encode(name)}&hash=${hash}&magnet=${encryptedMagnet}`;
+    const params = `?info_hash=${hash}&magnet=${encryptedMagnet}`;
 
     const url = this.apiUrl + endpoint + params;
     return axios.post(url)
