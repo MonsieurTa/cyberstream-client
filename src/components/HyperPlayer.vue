@@ -25,23 +25,6 @@ export default {
       player: null,
     };
   },
-  watch: {
-    src(v) {
-      this.player.src(v);
-    },
-    tracks(v) {
-      this.player.addRemoteTextTrack(
-        {
-          ...v,
-          kind: "subtitles",
-          mode: "showing",
-          language: "en",
-          label: "english",
-        },
-        false
-      );
-    },
-  },
   mounted() {
     this.player = videojs(
       this.$refs.videoPlayer,
@@ -50,6 +33,7 @@ export default {
         console.log("onPlayerReady", this);
       }
     );
+    this.player.src(this.src);
   },
   beforeDestroy() {
     if (this.player) {
