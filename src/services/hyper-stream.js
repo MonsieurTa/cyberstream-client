@@ -18,6 +18,12 @@ class HyperStream {
           src: { src: media_url, type },
           tracks: { src: subtitles_url }
         });
+
+function StreamError(msg) {
+  this.message = msg;
+  this.name = "Stream Error";
+}
+
 export class StreamResponse {
   _name = ""
   _mediaUrl = ""
