@@ -4,7 +4,7 @@ class HyperStream {
   apiUrl = null;
 
   constructor() {
-    this.apiUrl = "http://localhost:3001/api"
+    this.apiUrl = process.env.VUE_APP_API_URL;
   }
 
   stream(hash, encryptedMagnet) {
@@ -13,11 +13,15 @@ class HyperStream {
 
     const url = this.apiUrl + endpoint + params;
     return axios.post(url)
-      .then(({ data: { media_url, subtitles_url, type } }) => {
-        return ({
-          src: { src: media_url, type },
-          tracks: { src: subtitles_url }
-        });
+      .then(({ data }) => {
+        const resp = new StreamResponse(data);
+        if (!!resp.error && resp.error !== "") {
+          throw new StreamError(resp.error)
+        }
+        return resp;
+      });
+  }
+}
 
 function StreamError(msg) {
   this.message = msg;
