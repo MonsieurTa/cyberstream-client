@@ -72,19 +72,37 @@ export default {
       return this.playerSource === null || this.openListener === false;
     },
   },
+  watch: {
+    open: {
+      handler: function (v) {
+        if (!v) {
+          this.playerSource = null;
+          this.playerTracks = null;
+        }
+      },
+    },
+  },
   methods: {
-    async handleClick() {
+    handleClick() {
       this.loading = true;
 
       const infoHash = this.content.InfoHash.toLowerCase();
       const { MagnetUri } = this.content;
 
-      const { src, tracks } = await service.stream(infoHash, MagnetUri);
-
+      service
+        .stream(infoHash, MagnetUri)
+        .then((streamResp) => {
+          const { src, tracks } = streamResp.toVideoJSContent();
       this.playerSource = src;
       this.playerTracks = tracks;
-
+        })
+        .catch((err) => {
+          this.snackbarErrorMsg = err.message;
+          this.showErrorSnackbar = true;
+        })
+        .finally(() => {
       this.loading = false;
+        });
     },
     readableDataSize(strSize) {
       return convertDataUnit(parseInt(strSize));
