@@ -104,15 +104,15 @@ export default {
         .stream(infoHash, MagnetUri)
         .then((streamResp) => {
           const { src, tracks } = streamResp.toVideoJSContent();
-      this.playerSource = src;
-      this.playerTracks = tracks;
+          this.playerSource = src;
+          this.playerTracks = tracks;
         })
         .catch((err) => {
           this.snackbarErrorMsg = err.message;
           this.showErrorSnackbar = true;
         })
         .finally(() => {
-      this.loading = false;
+          this.loading = false;
         });
     },
     readableDataSize(strSize) {
