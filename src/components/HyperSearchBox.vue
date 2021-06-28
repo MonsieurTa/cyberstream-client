@@ -3,12 +3,17 @@
     <v-row>
       <v-spacer class="hidden-md-and-down" />
       <v-col lg="4" sm="12" md="12" class="d-flex flex-column justify-center">
-        <search-input :label="label" :pattern.sync="patternListener" :searchHandler="searchHandler" />
+        <search-input
+          :label="label"
+          :pattern.sync="patternListener"
+          :searchHandler="searchHandler"
+        />
         <v-row>
-          <v-spacer />
-          <v-col v-for="name in categoryItems" :key="name" cols="3">
+          <v-spacer class="hidden-md-and-down" />
+          <v-col v-for="name in categoryItems" :key="name" lg="3" sm="4">
             <v-checkbox
               dark
+              dense
               v-model="selectedCategoriesListener"
               :key="name"
               :label="name"
@@ -16,19 +21,19 @@
               hide-details
             />
           </v-col>
-          <v-spacer />
+          <v-spacer class="hidden-md-and-down" />
         </v-row>
       </v-col>
-      <v-spacer class="hidden-md-and-down"/>
+      <v-spacer class="hidden-md-and-down" />
     </v-row>
   </v-container>
 </template>
 
 <script>
-import SearchInput from '@/components/SearchInput.vue';
+import SearchInput from "@/components/SearchInput.vue";
 
 export default {
-  name: 'HyperSearchBox',
+  name: "HyperSearchBox",
   props: {
     pattern: String,
     selectedCategories: Array,
@@ -40,8 +45,7 @@ export default {
     SearchInput,
   },
   data() {
-    return {
-    };
+    return {};
   },
   computed: {
     patternListener: {
@@ -49,7 +53,7 @@ export default {
         return this.pattern;
       },
       set(value) {
-        this.$emit('update:pattern', value);
+        this.$emit("update:pattern", value);
       },
     },
     selectedCategoriesListener: {
@@ -57,7 +61,7 @@ export default {
         return this.selectedCategories;
       },
       set(value) {
-        this.$emit('update:selectedCategories', value);
+        this.$emit("update:selectedCategories", value);
       },
     },
   },
@@ -65,5 +69,4 @@ export default {
 </script>
 
 <style>
-
 </style>

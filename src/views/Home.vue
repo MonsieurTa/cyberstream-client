@@ -8,20 +8,24 @@
       :categoryItems="categoryNames"
       :searchHandler="handleSearch"
     />
-    <hyper-list
+    <hyper-data-table
       v-if="!pristine"
-      :items="searchResult"
+      :items="searchResults"
+      :loading="loading"
+      :content.sync="selectedContents"
     />
+    <hyper-media-dialog :open.sync="openDialog" :content="selectedContent" />
   </v-container>
 </template>
 
 <script>
 import service from "@/services/hyper-jackett";
-import HyperSearchBox from '@/components/HyperSearchBox.vue';
-import HyperList from '@/components/HyperList.vue';
+import HyperSearchBox from "@/components/HyperSearchBox.vue";
+import HyperDataTable from "@/components/HyperDataTable.vue";
+import HyperMediaDialog from "@/components/HyperMediaDialog.vue";
 
 export default {
-  components: { HyperSearchBox, HyperList },
+  components: { HyperSearchBox, HyperDataTable, HyperMediaDialog },
   name: "Home",
   async mounted() {
     service.fetchCategories().then((categories) => {
@@ -31,16 +35,32 @@ export default {
   data() {
     return {
       pristine: true,
+      loading: false,
+      openDialog: false,
 
       pattern: "",
       categories: {},
-      selectedCategories: [],
 
-      searchResult: [],
+      selectedCategories: [],
+      selectedContents: [],
+
+      searchResults: [],
 
       expandSearchClass: "d-flex align-center search-expand",
       collapseSearchClass: "d-flex align-center search-collapse",
     };
+  },
+  watch: {
+    openDialog(value) {
+      if (value === false) {
+        this.selectedContents = [];
+      }
+    },
+    selectedContents(value) {
+      if (value.length > 0) {
+        this.openDialog = true;
+      }
+    },
   },
   computed: {
     searchClass() {
@@ -50,25 +70,30 @@ export default {
       return Object.keys(this.categories);
     },
     categoryValues() {
-      return this.selectedCategories.map(c => this.categories[c])
-    }
+      return this.selectedCategories.map((c) => this.categories[c]);
+    },
+    selectedContent() {
+      const empty = (l) => l.length === 0;
+      return empty(this.selectedContents) ? {} : this.selectedContents[0];
+    },
   },
   methods: {
     async handleSearch() {
-      const response = await service.search(this.pattern, this.categoryValues);
-
       if (this.pristine) {
         this.pristine = false;
       }
 
-      this.searchResult = response["Results"];
+      this.loading = true;
+      const results = await service.search(this.pattern, this.categoryValues);
+      this.loading = false;
+
+      this.searchResults = results;
     },
   },
 };
 </script>
 
 <style scoped>
-
 h1 {
   font-size: 4.5em;
 }
@@ -82,5 +107,4 @@ h1 {
   flex-grow: 0;
   transition: flex-grow 0.2s ease-in;
 }
-
 </style>
