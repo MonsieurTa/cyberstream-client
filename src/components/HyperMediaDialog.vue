@@ -20,11 +20,20 @@
         </v-btn>
       </v-app-bar>
       <hyper-player
+        v-if="!!playerSource"
         :src="playerSource"
         :tracks="playerTracks"
         :options="playerOptions"
       />
     </v-card>
+    <v-snackbar v-model="showErrorSnackbar" :timeout="4000">
+      {{ snackbarErrorMsg }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-dialog>
 </template>
 
@@ -57,6 +66,8 @@ export default {
         liveui: true,
         controls: true,
       },
+      showErrorSnackbar: false,
+      snackbarErrorMsg: "",
     };
   },
   computed: {
