@@ -2,7 +2,7 @@ class HyperJackett {
   apiUrl = null;
 
   constructor() {
-    this.apiUrl = "http://localhost:3001/api/jackett"
+    this.apiUrl = process.env.VUE_APP_API_URL + "/jackett";
   }
 
   search(pattern, categories) {
