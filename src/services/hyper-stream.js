@@ -1,10 +1,11 @@
-import axios from "axios";
+import baseClient from "@/services/base-client";
 
 class HyperStream {
   apiUrl = null;
 
-  constructor() {
+  constructor(client) {
     this.apiUrl = process.env.VUE_APP_API_URL;
+    this.client = client;
   }
 
   stream(hash, encryptedMagnet) {
@@ -12,7 +13,7 @@ class HyperStream {
     const params = `?info_hash=${hash}&magnet=${encryptedMagnet}`;
 
     const url = this.apiUrl + endpoint + params;
-    return axios.post(url)
+    return this.client.post(url)
       .then(({ data }) => {
         const resp = new StreamResponse(data);
         if (!!resp.error && resp.error !== "") {
@@ -69,4 +70,4 @@ export class StreamResponse {
   }
 }
 
-export default new HyperStream();
+export default new HyperStream(baseClient);
