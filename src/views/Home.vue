@@ -28,9 +28,12 @@ export default {
   components: { HyperSearchBox, HyperDataTable, HyperMediaDialog },
   name: "Home",
   async mounted() {
-    service.fetchCategories().then((categories) => {
-      this.categories = categories;
-    });
+    service
+      .fetchCategories()
+      .then((categories) => {
+        this.categories = categories;
+      })
+      .catch((err) => console.log(err));
   },
   data() {
     return {
