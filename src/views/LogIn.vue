@@ -1,7 +1,7 @@
 <template>
   <v-container fill-height fluid>
     <v-row align="center" justify="center">
-      <v-col cols="2">
+      <v-col sm="12" md="6" lg="4" xl="2">
         <log-in-card />
       </v-col>
     </v-row>
