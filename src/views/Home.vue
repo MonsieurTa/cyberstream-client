@@ -15,6 +15,7 @@
       :content.sync="selectedContents"
     />
     <hyper-media-dialog :open.sync="openDialog" :content="selectedContent" />
+    <error-snack-back :msg="errorMsg" :open.sync="openErrorSnackbar" />
   </v-container>
 </template>
 
@@ -23,15 +24,26 @@ import service from "@/services/hyper-jackett";
 import HyperSearchBox from "@/components/HyperSearchBox.vue";
 import HyperDataTable from "@/components/HyperDataTable.vue";
 import HyperMediaDialog from "@/components/HyperMediaDialog.vue";
+import ErrorSnackBack from "@/components/ErrorSnackBack.vue";
 
 export default {
-  components: { HyperSearchBox, HyperDataTable, HyperMediaDialog },
+  components: {
+    HyperSearchBox,
+    HyperDataTable,
+    HyperMediaDialog,
+    ErrorSnackBack,
+  },
   name: "Home",
   async mounted() {
     service
       .fetchCategories()
       .then((categories) => {
         this.categories = categories;
+
+        // set default checkbox value to "Movies"
+        if (categories["Movies"] !== undefined) {
+          this.selectedCategories = ["Movies"];
+        }
       })
       .catch((err) => console.log(err));
   },
@@ -51,6 +63,8 @@ export default {
 
       expandSearchClass: "d-flex align-center search-expand",
       collapseSearchClass: "d-flex align-center search-collapse",
+      openErrorSnackbar: false,
+      errorMsg: "",
     };
   },
   watch: {
@@ -82,6 +96,9 @@ export default {
   },
   methods: {
     async handleSearch() {
+      if (!this.validSearch()) {
+        return;
+      }
       if (this.pristine) {
         this.pristine = false;
       }
@@ -91,6 +108,19 @@ export default {
       this.loading = false;
 
       this.searchResults = results;
+    },
+    validSearch() {
+      if (this.selectedCategories.length === 0) {
+        this.errorMsg = "Please select a category";
+        this.openErrorSnackbar = true;
+        return false;
+      }
+      if (this.pattern.length === 0) {
+        this.errorMsg = "Please enter a valid search";
+        this.openErrorSnackbar = true;
+        return false;
+      }
+      return true;
     },
   },
 };

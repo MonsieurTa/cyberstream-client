@@ -26,14 +26,7 @@
         :options="playerOptions"
       />
     </v-card>
-    <v-snackbar v-model="showErrorSnackbar" :timeout="4000">
-      {{ snackbarErrorMsg }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
+    <error-snack-back :msg="errorMsg" :open.sync="openErrorSnackbar" />
   </v-dialog>
 </template>
 
@@ -41,9 +34,10 @@
 import { convertDataUnit } from "@/utils/conversion";
 import HyperPlayer from "@/components/HyperPlayer.vue";
 import service from "@/services/hyper-stream";
+import ErrorSnackBack from "./ErrorSnackBack.vue";
 
 export default {
-  components: { HyperPlayer },
+  components: { HyperPlayer, ErrorSnackBack },
   name: "HyperMediaDialog",
   props: {
     open: Boolean,
@@ -66,8 +60,8 @@ export default {
         liveui: true,
         controls: true,
       },
-      showErrorSnackbar: false,
-      snackbarErrorMsg: "",
+      openErrorSnackbar: false,
+      errorMsg: "",
     };
   },
   computed: {
@@ -108,8 +102,8 @@ export default {
           this.playerTracks = tracks;
         })
         .catch((err) => {
-          this.snackbarErrorMsg = err.message;
-          this.showErrorSnackbar = true;
+          this.errorMsg = err.message;
+          this.openErrorSnackbar = true;
         })
         .finally(() => {
           this.loading = false;
