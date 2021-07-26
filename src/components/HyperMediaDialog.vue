@@ -4,7 +4,9 @@
       <v-app-bar color="black">
         <v-card-text>{{ content.Title }}</v-card-text>
         <v-spacer />
+        <v-progress-circular v-if="loading" indeterminate color="red" />
         <v-btn
+          v-else-if="!loading && !playerSource"
           icon
           small
           left
