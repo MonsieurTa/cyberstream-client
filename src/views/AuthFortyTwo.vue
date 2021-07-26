@@ -1,5 +1,17 @@
 <template>
-  <div />
+  <v-container fill-height fluid>
+    <v-row align="center" justify="center">
+      <v-col
+        sm="12"
+        md="6"
+        lg="4"
+        xl="2"
+        class="d-flex flex-column justify-center align-center"
+      >
+        <v-progress-circular indeterminate color="white" :size="100" />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
